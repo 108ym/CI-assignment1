@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 #initialise fuzzy variables
 ambient_light = ctrl.Antecedent(np.arange(0, 200, 0.1), 'ambient_light')
-motion = ctrl.Antecedent(np.arange(0, 10, 0.1), 'motion')
+distance = ctrl.Antecedent(np.arange(0, 110, 0.1), 'distance')
 traffic_activity = ctrl.Antecedent(np.arange(0, 900, 1), 'traffic_activity')
 pedestrian_activity = ctrl.Antecedent(np.arange(0, 500, 1), 'pedestrian_activity')
 visibility = ctrl.Antecedent(np.arange(0, 2500, 1), 'visibility')
@@ -21,10 +21,13 @@ ambient_light['bright'] = mf.trimf(ambient_light.universe, [100, 150, 200]) #wel
 ambient_light['very bright'] = mf.trapmf(ambient_light.universe, [150, 175, 200, 200]) #bright (office lighting)
 ambient_light.view()
 
-# Motion
-motion['yes'] = mf.trapmf(motion.universe, [0, 0, 8, 10])
-motion['no'] = mf.trimf(motion.universe, [8, 10, 10]) #distance beyond the detection of sensor
-motion.view()
+# distance from the street lamp (meters)
+distance['very close'] = mf.trimf(distance.universe, [0, 0, 10])
+distance['close'] = mf.trimf(distance.universe, [5, 13, 20]) 
+distance['moderate'] = mf.trimf(distance.universe, [15, 32, 50])
+distance['far'] = mf.trimf(distance.universe, [40, 70, 100])
+distance['very far'] = mf.trapmf(distance.universe, [80, 100, 110, 110])
+distance.view()
 
 # Traffic Activity per hour
 traffic_activity['light'] = mf.trimf(traffic_activity.universe, [0, 200, 400])
