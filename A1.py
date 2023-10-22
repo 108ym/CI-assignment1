@@ -163,16 +163,8 @@ rule11 = ctrl.Rule((ambient_light['bright']) &
                   (time_of_day['night'] | time_of_day['midnight']), 
                   (brightness['medium'], colour_temp['neutral white']))
 
-# Residential Cul-de-Sac at Night:
-rule12 = ctrl.Rule((ambient_light['moderate']) & 
-                  (distance['very close'] | distance['close']) & 
-                  (traffic_activity['light'] & pedestrian_activity['light']) & 
-                  (visibility['moderate'] | visibility['clear']) & 
-                  (time_of_day['dusk'] | time_of_day['night'] | time_of_day['midnight']), 
-                  (brightness['medium'], colour_temp['warm white']))
-
 # Outdoor Dining Area in the Evening:
-rule13 = ctrl.Rule((ambient_light['moderate']) & 
+rule12 = ctrl.Rule((ambient_light['moderate']) & 
                   (distance['very close'] | distance['close']) & 
                   (traffic_activity['light'] & pedestrian_activity['heavy']) & 
                   (visibility['moderate'] | visibility['clear']) & 
@@ -180,28 +172,28 @@ rule13 = ctrl.Rule((ambient_light['moderate']) &
                   (brightness['high'], colour_temp['neutral white']))
 
 # Sports Field Lighting at Night:
-rule14 = ctrl.Rule((ambient_light['very bright']) & 
+rule13 = ctrl.Rule((ambient_light['very bright']) & 
                   (distance['close'] | distance['moderate']) & 
                   (traffic_activity['light'] & pedestrian_activity['light']) & 
                   (visibility['clear'] | visibility['excellent']) & 
                   (time_of_day['dusk'] | time_of_day['night']), 
                   (brightness['low'], colour_temp['daylight white']))
 
-rule15 = ctrl.Rule((ambient_light['very bright']) & 
+rule14 = ctrl.Rule((ambient_light['very bright']) & 
                   (distance['close'] | distance['moderate']) & 
                   (traffic_activity['light'] & pedestrian_activity['moderate']) & 
                   (visibility['clear'] | visibility['excellent']) & 
                   (time_of_day['dusk'] | time_of_day['night']), 
                   (brightness['medium'], colour_temp['daylight white']))
 
-rule16 = ctrl.Rule((ambient_light['very bright']) & 
+rule15 = ctrl.Rule((ambient_light['very bright']) & 
                   (distance['close'] | distance['moderate']) & 
                   (traffic_activity['light'] & pedestrian_activity['heavy']) & 
                   (visibility['clear'] | visibility['excellent']) & 
                   (time_of_day['dusk'] | time_of_day['night']), 
                   (brightness['high'], colour_temp['daylight white']))
 
-rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14, rule15, rule16]
+rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14, rule15]
 
 train_ctrl = ctrl.ControlSystem(rules=rules)
 train = ctrl.ControlSystemSimulation(control_system=train_ctrl)
@@ -223,7 +215,6 @@ print(train.output)
 # To extract the outputs
 print(train.output['brightness'])
 print(train.output['colour temperature'])
-
 
 
 
