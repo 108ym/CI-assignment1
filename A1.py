@@ -206,7 +206,7 @@ rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, 
 train_ctrl = ctrl.ControlSystem(rules=rules)
 train = ctrl.ControlSystemSimulation(control_system=train_ctrl)
 
-# define the values for the inputs
+# Define the values for the inputs
 train.input['ambient light'] = 170
 train.input['distance'] = 20
 train.input['traffic activity'] = 20
@@ -214,13 +214,13 @@ train.input['pedestrian activity'] = 480
 train.input['visibility'] = 2200
 train.input['time of day'] = 20
 
-# compute the outputs
+# Compute the outputs
 train.compute()
 
-# print the output values
+# Print the output values
 print(train.output)
 
-# to extract one of the outputs
+# To extract the outputs
 print(train.output['brightness'])
 print(train.output['colour temperature'])
 
