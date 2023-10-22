@@ -10,6 +10,8 @@ traffic_activity = ctrl.Antecedent(np.arange(0, 900, 1), 'traffic activity')
 pedestrian_activity = ctrl.Antecedent(np.arange(0, 500, 1), 'pedestrian activity')
 visibility = ctrl.Antecedent(np.arange(0, 2500, 1), 'visibility')
 time_of_day = ctrl.Antecedent(np.arange(0, 24, 0.1), 'time of day')
+
+# Consequent 
 brightness = ctrl.Consequent(np.arange(0, 18000, 1), 'brightness')
 color_temp = ctrl.Consequent(np.arange(0, 6500, 1), 'color temp')
 
@@ -72,7 +74,7 @@ color_temp['neutral white'] = mf.trimf(color_temp.universe, [3800, 4000, 5200])
 color_temp['daylight white'] = mf.trapmf(color_temp.universe, [5000, 5700, 6500, 6500])
 color_temp.view()
 
-# plt.show()
+plt.show()
 
 # Define fuzzy rules (Include only the 18 most frequently occurring scenarios)
 
@@ -305,7 +307,28 @@ rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, 
          rule161, rule162, rule163, rule164, rule165, rule166, rule167, rule168, rule169, rule170, rule171, rule172, rule173, rule174, 
          rule175]
 
+# Construct fuzzy control system
 
+train_ctrl = ctrl.ControlSystem(rules=rules)
+train = ctrl.ControlSystemSimulation(control_system=train_ctrl)
+
+# define the values for the inputs
+train.input['ambient_light'] = 30
+train.input['distance'] = 50
+train.input['traffic_activity'] = 100
+train.input['pedestrian_activity'] = 250
+train.input['visibility'] = 1000
+train.input['time_of_day'] = 24
+
+
+# compute the outputs
+train.compute()
+
+# print the output values
+print(train.output)
+
+# to extract one of the outputs
+print(train.output['brightness'])
 
 
 
