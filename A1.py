@@ -19,7 +19,7 @@ ambient_light['dark'] = mf.trimf(ambient_light.universe, [10, 20, 30]) #room lit
 ambient_light['moderate'] = mf.trimf(ambient_light.universe, [20, 85, 150]) #room with curtains drawn on a cloudy day
 ambient_light['bright'] = mf.trimf(ambient_light.universe, [100, 150, 200]) #well-lit indoor enviroment that provides decent visibility
 ambient_light['very bright'] = mf.trapmf(ambient_light.universe, [150, 175, 200, 200]) #bright (office lighting)
-ambient_light.view()
+# ambient_light.view()
 
 # Distance from the street lamp (meters)
 distance['very close'] = mf.trimf(distance.universe, [0, 0, 10])
@@ -27,19 +27,19 @@ distance['close'] = mf.trimf(distance.universe, [5, 13, 20])
 distance['moderate'] = mf.trimf(distance.universe, [15, 32, 50])
 distance['far'] = mf.trimf(distance.universe, [40, 70, 100])
 distance['very far'] = mf.trapmf(distance.universe, [80, 100, 110, 110])
-distance.view()
+# distance.view()
 
 # Traffic Activity per hour
 traffic_activity['light'] = mf.trimf(traffic_activity.universe, [0, 200, 400])
 traffic_activity['moderate'] = mf.trimf(traffic_activity.universe, [200, 400, 600])
 traffic_activity['heavy'] = mf.trapmf(traffic_activity.universe, [500, 700, 900, 900])
-traffic_activity.view()
+# traffic_activity.view()
 
 # Pedestrian Activity per hour
 pedestrian_activity['light'] = mf.trimf(pedestrian_activity.universe, [0, 0, 100])
 pedestrian_activity['moderate'] = mf.trimf(pedestrian_activity.universe, [50, 150, 250])
 pedestrian_activity['heavy'] = mf.trimf(pedestrian_activity.universe, [200, 500, 500]) # why?
-pedestrian_activity.view()
+# pedestrian_activity.view()
 
 # Visibility
 visibility['very_poor'] = mf.trimf(visibility.universe, [0, 25, 100])
@@ -47,7 +47,7 @@ visibility['poor'] = mf.trimf(visibility.universe, [50, 125, 350])
 visibility['moderate'] = mf.trimf(visibility.universe, [300, 750, 1200])
 visibility['clear'] = mf.trimf(visibility.universe, [1000, 1750, 2300])
 visibility['excellent'] = mf.trapmf(visibility.universe, [2100, 2300, 2500, 2500])
-visibility.view()
+# visibility.view()
 
 # Time of Day
 time_of_day['midnight'] = mf.trimf(time_of_day.universe, [0, 1, 4])
@@ -55,7 +55,7 @@ time_of_day['dawn'] = mf.trimf(time_of_day.universe, [3, 5.5, 7])
 time_of_day['day'] = mf.trimf(time_of_day.universe, [6, 13, 18])
 time_of_day['dusk'] = mf.trimf(time_of_day.universe, [17, 19, 21])
 time_of_day['night'] = mf.trapmf(time_of_day.universe, [20, 21, 24, 24])
-time_of_day.view()
+# time_of_day.view()
 
 # LED Brightness
 brightness['lower'] = mf.trimf(brightness.universe, [0, 1000, 3500])
@@ -63,16 +63,15 @@ brightness['low'] = mf.trimf(brightness.universe, [2000, 5000, 8000])
 brightness['medium'] = mf.trimf(brightness.universe, [7000, 9500, 12000])
 brightness['high'] = mf.trimf(brightness.universe, [11000, 13500, 16000])
 brightness['higher'] = mf.trapmf(brightness.universe, [15000, 16500, 18000, 18000])
-brightness.view()
+# brightness.view()
 
 # colour Temperature
 colour_temp['warm glow'] = mf.trimf(colour_temp.universe, [0, 1000, 2700])
 colour_temp['warm white'] = mf.trimf(colour_temp.universe, [2500, 3000, 4000])
 colour_temp['neutral white'] = mf.trimf(colour_temp.universe, [3800, 4000, 5200])
 colour_temp['daylight white'] = mf.trapmf(colour_temp.universe, [5000, 5700, 6500, 6500])
-colour_temp.view()
+# colour_temp.view()
 
-# plt.show()
 
 # Define fuzzy rules (Include only the 18 most frequently occurring scenarios)
 
@@ -216,5 +215,71 @@ print(train.output)
 print(train.output['brightness'])
 print(train.output['colour temperature'])
 
+# Viewing the result on the graph based on the values of the inputs
+brightness.view(sim=train)
+colour_temp.view(sim=train)
 
 
+
+# View control/ output space
+x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
+                   np.linspace(distance.universe.min(), distance.universe.max(), 100))
+z_brigtness = np.zeros_like(x, dtype=float)
+z_colour_temp = np.zeros_like(x, dtype=float)
+
+
+# Create meshgrid for ambient_light and distance
+x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
+                   np.linspace(distance.universe.min(), distance.universe.max(), 100))
+
+# Initialize arrays to hold the outputs
+z_brightness = np.zeros_like(x, dtype=float)
+z_colour_temp = np.zeros_like(x, dtype=float)
+
+# Constants for other variables
+fixed_traffic_activity = 300
+fixed_pedestrian_activity = 200
+fixed_visibility = 1000
+fixed_time_of_day = 12
+
+# Loop through grid
+for i, r in enumerate(x):
+    for j, c in enumerate(r):
+        # Set the inputs
+        train.input['ambient light'] = x[i, j]
+        train.input['distance'] = y[i, j]
+
+        # Set the constant input variables
+        train.input['traffic activity'] = fixed_traffic_activity
+        train.input['pedestrian activity'] = fixed_pedestrian_activity
+        train.input['visibility'] = fixed_visibility
+        train.input['time of day'] = fixed_time_of_day
+
+        try:
+            train.compute()
+        except:
+            z_brightness[i, j] = float('inf')
+            z_colour_temp[i, j] = float('inf')
+
+        z_brightness[i, j] = train.output['brightness']
+        z_colour_temp[i, j] = train.output['colour temperature']
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+# Function to plot
+def plot3d(x, y, z, label):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', linewidth=0.4, antialiased=True)
+
+    ax.contourf(x, y, z, zdir='z', offset=-2.5, cmap='viridis', alpha=0.5)
+    ax.contourf(x, y, z, zdir='x', offset=x.max()*1.5, cmap='viridis', alpha=0.5)
+    ax.contourf(x, y, z, zdir='y', offset=y.max()*1.5, cmap='viridis', alpha=0.5)
+    ax.set_title(label)
+    ax.view_init(30, 200)
+
+# Plot the graphs
+plot3d(x, y, z_brightness, "Brightness")
+plot3d(x, y, z_colour_temp, "Colour Temperature")
+
+plt.show()
