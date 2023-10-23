@@ -215,71 +215,168 @@ print(train.output)
 print(train.output['brightness'])
 print(train.output['colour temperature'])
 
-# Viewing the result on the graph based on the values of the inputs
-brightness.view(sim=train)
-colour_temp.view(sim=train)
+# # Viewing the result on the graph based on the values of the inputs
+# brightness.view(sim=train)
+# colour_temp.view(sim=train)
+
+# # View control/ output space
+# x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
+#                    np.linspace(distance.universe.min(), distance.universe.max(), 100))
+# z_brigtness = np.zeros_like(x, dtype=float)
+# z_colour_temp = np.zeros_like(x, dtype=float)
 
 
+# # Create meshgrid for ambient_light and distance
+# x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
+#                    np.linspace(distance.universe.min(), distance.universe.max(), 100))
 
-# View control/ output space
-x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
-                   np.linspace(distance.universe.min(), distance.universe.max(), 100))
-z_brigtness = np.zeros_like(x, dtype=float)
-z_colour_temp = np.zeros_like(x, dtype=float)
+# # Initialize arrays to hold the outputs
+# z_brightness = np.zeros_like(x, dtype=float)
+# z_colour_temp = np.zeros_like(x, dtype=float)
+
+# # Constants for other variables
+# # fixed_ambient_light = 
+# # fixed_distance = 
+# fixed_traffic_activity = 300
+# fixed_pedestrian_activity = 200
+# fixed_visibility = 1000
+# fixed_time_of_day = 12
+
+# # Loop through grid
+# for i, r in enumerate(x):
+#     for j, c in enumerate(r):
+#         # Set the inputs
+#         train.input['ambient light'] = x[i, j]
+#         train.input['distance'] = y[i, j]
+
+#         # Set the constant input variables
+#         train.input['traffic activity'] = fixed_traffic_activity
+#         train.input['pedestrian activity'] = fixed_pedestrian_activity
+#         train.input['visibility'] = fixed_visibility
+#         train.input['time of day'] = fixed_time_of_day
+
+#         try:
+#             train.compute()
+#         except:
+#             z_brightness[i, j] = float('inf')
+#             z_colour_temp[i, j] = float('inf')
+
+#         z_brightness[i, j] = train.output['brightness']
+#         z_colour_temp[i, j] = train.output['colour temperature']
 
 
-# Create meshgrid for ambient_light and distance
-x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
-                   np.linspace(distance.universe.min(), distance.universe.max(), 100))
+# # Function to plot
+# def plot3d(x, y, z, label):
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111, projection='3d')
+#     ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', linewidth=0.4, antialiased=True)
 
-# Initialize arrays to hold the outputs
-z_brightness = np.zeros_like(x, dtype=float)
-z_colour_temp = np.zeros_like(x, dtype=float)
+#     ax.contourf(x, y, z, zdir='z', offset=-2.5, cmap='viridis', alpha=0.5)
+#     ax.contourf(x, y, z, zdir='x', offset=x.max()*1.5, cmap='viridis', alpha=0.5)
+#     ax.contourf(x, y, z, zdir='y', offset=y.max()*1.5, cmap='viridis', alpha=0.5)
+#     ax.set_title(label)
+#     ax.view_init(30, 200)
 
-# Constants for other variables
-fixed_traffic_activity = 300
-fixed_pedestrian_activity = 200
-fixed_visibility = 1000
-fixed_time_of_day = 12
+# # Plot the graphs
+# plot3d(x, y, z_brightness, "Brightness")
+# plot3d(x, y, z_colour_temp, "Colour Temperature")
 
-# Loop through grid
-for i, r in enumerate(x):
-    for j, c in enumerate(r):
-        # Set the inputs
-        train.input['ambient light'] = x[i, j]
-        train.input['distance'] = y[i, j]
+# plt.show()
 
-        # Set the constant input variables
-        train.input['traffic activity'] = fixed_traffic_activity
-        train.input['pedestrian activity'] = fixed_pedestrian_activity
-        train.input['visibility'] = fixed_visibility
-        train.input['time of day'] = fixed_time_of_day
 
+# Allow the user input and output 
+# Initialize the control system
+
+def show_graph(train):
+    while True:
+        print("\nWhat would you like to do next?")
+        print("1. View the graphs")
+        print("2. Quit")
+        
+        choice = input("Enter your choice (1/2): ")
+        print("************************************************************************************")
+
+        
+        if choice == "1":
+            # Viewing the result on the graph based on the values of the inputs
+            brightness.view(sim=train)
+            colour_temp.view(sim=train)
+            plt.show()
+        elif choice == "2":
+            print("\nExiting program. Goodbye! 👋")
+            exit()
+        else:
+            print("Invalid choice. Please enter again.")
+            continue
+
+        break_if_needed = input("Do you want to continue? (y/n): ")
+        if break_if_needed.lower() == 'n':
+            print("\nExiting program. Goodbye! 👋")
+            exit()
+
+def get_float_input(prompt, min_value, max_value):
+    while True:
         try:
-            train.compute()
-        except:
-            z_brightness[i, j] = float('inf')
-            z_colour_temp[i, j] = float('inf')
+            value = float(input(prompt))
+            if min_value <= value <= max_value:
+                return value
+            else:
+                print(f"❗️ Please enter a value between {min_value} and {max_value}.")
+        except ValueError:
+            print("❗️ Invalid input. Please enter a numerical value.")
 
-        z_brightness[i, j] = train.output['brightness']
-        z_colour_temp[i, j] = train.output['colour temperature']
+def main():
+    # Provide a fancy header
+    print("************************************************************************************")
+    print("                    🌟 Smart Street Lighting Fuzzy System 🌟                        ")
+    print("************************************************************************************")
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-# Function to plot
-def plot3d(x, y, z, label):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', linewidth=0.4, antialiased=True)
+    # Introduce the system
+    print("\n👋 Welcome to the Smart Street Lighting Fuzzy System!")
+    print("👉 This system is designed to predict the ideal brightness and color temperature")
+    print("   for street lamps based on various environmental factors.")
+    print("🔹 Factors include ambient light, distance from the streetlamp, traffic activity,")
+    print("   pedestrian activity, visibility, and the time of day.")
+    print("🔹 Just enter the data as prompted, and the system will do the rest!\n")
+    print("************************************************************************************")
 
-    ax.contourf(x, y, z, zdir='z', offset=-2.5, cmap='viridis', alpha=0.5)
-    ax.contourf(x, y, z, zdir='x', offset=x.max()*1.5, cmap='viridis', alpha=0.5)
-    ax.contourf(x, y, z, zdir='y', offset=y.max()*1.5, cmap='viridis', alpha=0.5)
-    ax.set_title(label)
-    ax.view_init(30, 200)
 
-# Plot the graphs
-plot3d(x, y, z_brightness, "Brightness")
-plot3d(x, y, z_colour_temp, "Colour Temperature")
+    # Offer instructions
+    print("\n📝 Follow the prompts to input your data.\n")
 
-plt.show()
+    print("************************************************************************************")
+
+
+    # Collect data from the user with error handling
+    ambient_light_input = get_float_input("💡 Enter the Ambient Light Level (0-200): ", 0, 200)
+    distance_input = get_float_input("📏 Enter the Distance from the Street Lamp (0-110): ", 0, 110)
+    traffic_activity_input = get_float_input("🚗 Enter the Traffic Activity per Hour (0-900): ", 0, 900)
+    pedestrian_activity_input = get_float_input("🚶 Enter the Pedestrian Activity per Hour (0-500): ", 0, 500)
+    visibility_input = get_float_input("👀 Enter the Visibility Level (0-2500): ", 0, 2500)
+    time_of_day_input = get_float_input("🕒 Enter the Time of Day (0-24): ", 0, 24)
+    
+    print("\n🔍 Computing the ideal light settings...\n")
+    print("************************************************************************************")
+
+
+    # Define the values for the inputs
+    train.input['ambient light'] = ambient_light_input
+    train.input['distance'] = distance_input
+    train.input['traffic activity'] = traffic_activity_input
+    train.input['pedestrian activity'] = pedestrian_activity_input
+    train.input['visibility'] = visibility_input
+    train.input['time of day'] = time_of_day_input
+    
+    # Compute the outputs
+    train.compute()
+    
+    # Print the output values
+    print("\n🎉 Predicted Output Values:")
+    print(f"💡 Brightness Level: {train.output['brightness']}")
+    print(f"🌈 Colour Temperature: {train.output['colour temperature']} \n")
+    print("************************************************************************************")
+
+    show_graph(train)
+
+if __name__ == '__main__':
+    main()
