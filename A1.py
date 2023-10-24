@@ -219,82 +219,113 @@ print(train.output['colour temperature'])
 # brightness.view(sim=train)
 # colour_temp.view(sim=train)
 
-# # View control/ output space
-# x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
-#                    np.linspace(distance.universe.min(), distance.universe.max(), 100))
-# z_brigtness = np.zeros_like(x, dtype=float)
-# z_colour_temp = np.zeros_like(x, dtype=float)
+def show_3d_graph(first_variable, second_variable):
+
+    fuzzy_variables = {
+    'ambient light': ambient_light,
+    'distance': distance,
+    'traffic activity': traffic_activity,
+    'pedestrian activity': pedestrian_activity,
+    'visibility': visibility,
+    'time of day': time_of_day,
+    'brightness': brightness,
+    'colour temperature': colour_temp
+    }
+    # Create meshgrid for the two chosen variables
+    x, y = np.meshgrid(np.linspace(fuzzy_variables[first_variable].universe.min(), fuzzy_variables[first_variable].universe.max(), 100),
+                   np.linspace(fuzzy_variables[second_variable].universe.min(), fuzzy_variables[second_variable].universe.max(), 100))
+
+    # Initialize arrays to hold the outputs
+    z_brightness = np.zeros_like(x, dtype=float)
+    z_colour_temp = np.zeros_like(x, dtype=float)
+
+    # Constants for other variables (could be adjusted)
+    fixed_values = {
+        'ambient light': 100,
+        'distance': 55,
+        'traffic activity': 300,
+        'pedestrian activity': 200,
+        'visibility': 1000,
+        'time of day': 12
+    }
+
+    # Loop through grid
+    for i, r in enumerate(x):
+        for j, c in enumerate(r):
+            # Set the chosen input variables
+            train.input[first_variable] = x[i, j]
+            train.input[second_variable] = y[i, j]
+
+            # Set the constant input variables for non-chosen ones
+            for var in fixed_values:
+                if var != first_variable and var != second_variable:
+                    train.input[var] = fixed_values[var]
+
+            try:
+                train.compute()
+            except:
+                z_brightness[i, j] = float('inf')
+                z_colour_temp[i, j] = float('inf')
+
+            z_brightness[i, j] = train.output['brightness']
+            z_colour_temp[i, j] = train.output['colour temperature']
+
+    # Function to plot
+    def plot3d(x, y, z, label):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', linewidth=0.4, antialiased=True)
+
+        ax.contourf(x, y, z, zdir='z', offset=-2.5, cmap='viridis', alpha=0.5)
+        ax.contourf(x, y, z, zdir='x', offset=x.max()*1.5, cmap='viridis', alpha=0.5)
+        ax.contourf(x, y, z, zdir='y', offset=y.max()*1.5, cmap='viridis', alpha=0.5)
+        ax.set_xlabel(first_variable)  # Set x-axis label
+        ax.set_ylabel(second_variable)  # Set y-axis label
+        ax.set_zlabel(label)  # Set z-axis label
+
+        ax.set_title(label)
+        ax.view_init(30, 200)
+
+    # Plot the graphs
+    plot3d(x, y, z_brightness, "Brightness")
+    plot3d(x, y, z_colour_temp, "Colour Temperature")
+
+    plt.show()
 
 
-# # Create meshgrid for ambient_light and distance
-# x, y = np.meshgrid(np.linspace(ambient_light.universe.min(), ambient_light.universe.max(), 100),
-#                    np.linspace(distance.universe.min(), distance.universe.max(), 100))
+def choose_input_variables():
+    variables = ['ambient light', 'distance', 'traffic activity', 'pedestrian activity', 'visibility', 'time of day']
+    print("\nChoose two input variables to view in the 3D graph:")
 
-# # Initialize arrays to hold the outputs
-# z_brightness = np.zeros_like(x, dtype=float)
-# z_colour_temp = np.zeros_like(x, dtype=float)
+    for i, var in enumerate(variables, 1):
+        print(f"{i}. {var}")
 
-# # Constants for other variables
-# # fixed_ambient_light = 
-# # fixed_distance = 
-# fixed_traffic_activity = 300
-# fixed_pedestrian_activity = 200
-# fixed_visibility = 1000
-# fixed_time_of_day = 12
-
-# # Loop through grid
-# for i, r in enumerate(x):
-#     for j, c in enumerate(r):
-#         # Set the inputs
-#         train.input['ambient light'] = x[i, j]
-#         train.input['distance'] = y[i, j]
-
-#         # Set the constant input variables
-#         train.input['traffic activity'] = fixed_traffic_activity
-#         train.input['pedestrian activity'] = fixed_pedestrian_activity
-#         train.input['visibility'] = fixed_visibility
-#         train.input['time of day'] = fixed_time_of_day
-
-#         try:
-#             train.compute()
-#         except:
-#             z_brightness[i, j] = float('inf')
-#             z_colour_temp[i, j] = float('inf')
-
-#         z_brightness[i, j] = train.output['brightness']
-#         z_colour_temp[i, j] = train.output['colour temperature']
+    print("\n************************************************************************************\n")
 
 
-# # Function to plot
-# def plot3d(x, y, z, label):
-#     fig = plt.figure()
-#     ax = fig.add_subplot(111, projection='3d')
-#     ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', linewidth=0.4, antialiased=True)
+    while True:
+        try:
+            first_choice = int(input("1️⃣ Enter the number for the first variable: "))
+            second_choice = int(input("2️⃣ Enter the number for the second variable: "))
 
-#     ax.contourf(x, y, z, zdir='z', offset=-2.5, cmap='viridis', alpha=0.5)
-#     ax.contourf(x, y, z, zdir='x', offset=x.max()*1.5, cmap='viridis', alpha=0.5)
-#     ax.contourf(x, y, z, zdir='y', offset=y.max()*1.5, cmap='viridis', alpha=0.5)
-#     ax.set_title(label)
-#     ax.view_init(30, 200)
-
-# # Plot the graphs
-# plot3d(x, y, z_brightness, "Brightness")
-# plot3d(x, y, z_colour_temp, "Colour Temperature")
-
-# plt.show()
+            if 1 <= first_choice <= 6 and 1 <= second_choice <= 6 and first_choice != second_choice:
+                return variables[first_choice-1], variables[second_choice-1]
+            else:
+                print("❗️ Please select two different variables from the list. Make sure your choices are between 1 and 6.")
+        except ValueError:
+            print("❗️ Invalid choice. Please enter the numbers corresponding to the variables.")
 
 
-# Allow the user input and output 
-# Initialize the control system
 
 def show_graph(train):
     while True:
         print("\nWhat would you like to do next?")
-        print("1. View the graphs")
-        print("2. Quit")
+        print("1. View the result graphs (brightness level & colour temperature)")
+        print("2. Show control/ output space 3d graph")
+        print("3. Quit")
         
-        choice = input("Enter your choice (1/2): ")
-        print("************************************************************************************")
+        choice = input("Enter your choice (1/3): ")
+        print("\n************************************************************************************")
 
         
         if choice == "1":
@@ -303,13 +334,16 @@ def show_graph(train):
             colour_temp.view(sim=train)
             plt.show()
         elif choice == "2":
+            first_var, second_var = choose_input_variables()
+            show_3d_graph(first_var, second_var)
+        elif choice == "3":
             print("\nExiting program. Goodbye! 👋")
             exit()
         else:
             print("Invalid choice. Please enter again.")
             continue
 
-        break_if_needed = input("Do you want to continue? (y/n): ")
+        break_if_needed = input("\nDo you want to continue? (y/n): ")
         if break_if_needed.lower() == 'n':
             print("\nExiting program. Goodbye! 👋")
             exit()
@@ -325,6 +359,41 @@ def get_float_input(prompt, min_value, max_value):
         except ValueError:
             print("❗️ Invalid input. Please enter a numerical value.")
 
+def variable_instructions():
+    print("************************************************************************************")
+    print("                            📜 Variable Instructions 📜                            ")
+    print("************************************************************************************")
+    
+    print("\n💡 Ambient Light Level:")
+    print("    - Measured in Lux.")
+    print("    - Represents the environmental light conditions.")
+    print("    - Range: 0 (like twilight hours) to 200 (like a bright indoor area).")
+    
+    print("\n📏 Distance from the Street Lamp:")
+    print("    - Measured in meters.")
+    print("    - Distance between the object and the lamp post.")
+    print("    - Range: 0 (directly below the lamp) to 110 (far from the lamp).")
+    
+    print("\n🚗 Traffic Activity per Hour:")
+    print("    - Represents the number of vehicles passing through an area in an hour.")
+    print("    - Range: 0 (no vehicles) to 900 (very busy intersection).")
+    
+    print("\n🚶 Pedestrian Activity per Hour:")
+    print("    - Represents the number of people passing through an area in an hour.")
+    print("    - Range: 0 (no pedestrians) to 500 (crowded area).")
+    
+    print("\n👀 Visibility Level:")
+    print("    - Measured based on atmospheric conditions such as fog.")
+    print("    - Represents how far one can see clearly.")
+    print("    - Range: 0 (poor visibility) to 2500 (clear visibility).")
+    
+    print("\n🕒 Time of Day:")
+    print("    - Represents the hour in a 24-hour format.")
+    print("    - Range: 0 (midnight) to 24 (end of the day).")
+    print("    - Example: 13 for 1 PM.")
+    
+    print("************************************************************************************")
+
 def main():
     # Provide a fancy header
     print("************************************************************************************")
@@ -338,7 +407,7 @@ def main():
     print("🔹 Factors include ambient light, distance from the streetlamp, traffic activity,")
     print("   pedestrian activity, visibility, and the time of day.")
     print("🔹 Just enter the data as prompted, and the system will do the rest!\n")
-    print("************************************************************************************")
+    variable_instructions()
 
 
     # Offer instructions
