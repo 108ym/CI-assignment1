@@ -197,28 +197,6 @@ rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, 
 train_ctrl = ctrl.ControlSystem(rules=rules)
 train = ctrl.ControlSystemSimulation(control_system=train_ctrl)
 
-# Define the values for the inputs
-train.input['ambient light'] = 170
-train.input['distance'] = 20
-train.input['traffic activity'] = 20
-train.input['pedestrian activity'] = 480
-train.input['visibility'] = 2200
-train.input['time of day'] = 20
-
-# Compute the outputs
-train.compute()
-
-# Print the output values
-print(train.output)
-
-# To extract the outputs
-print(train.output['brightness'])
-print(train.output['colour temperature'])
-
-# # Viewing the result on the graph based on the values of the inputs
-# brightness.view(sim=train)
-# colour_temp.view(sim=train)
-
 def show_3d_graph(first_variable, second_variable):
 
     fuzzy_variables = {
@@ -231,6 +209,7 @@ def show_3d_graph(first_variable, second_variable):
     'brightness': brightness,
     'colour temperature': colour_temp
     }
+    
     # Create meshgrid for the two chosen variables
     x, y = np.meshgrid(np.linspace(fuzzy_variables[first_variable].universe.min(), fuzzy_variables[first_variable].universe.max(), 100),
                    np.linspace(fuzzy_variables[second_variable].universe.min(), fuzzy_variables[second_variable].universe.max(), 100))
