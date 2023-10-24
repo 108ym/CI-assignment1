@@ -371,12 +371,33 @@ def variable_instructions():
     print("    - Range: 0 (midnight) to 24 (end of the day).")
     print("    - Example: 13 for 1 PM.")
     
+def output_instructions():
+    print("\n************************************************************************************")
+    print("                             📜 Output Instructions 📜                            ")
     print("************************************************************************************")
+    
+    print("\n💡 Brightness Level of the Street Lamp:")
+    print("    - Measured in Lumens.")
+    print("    - Represents the intensity of light emitted by the street lamp.")
+    print("    - Range: 0 (lamp off) to 18000 (maximum brightness).")
+    
+    print("\n🎨 Colour Temperature of the Street Lamp:")
+    print("    - Measured in Kelvin (K).")
+    print("    - Describes the warmth or coolness of the light appearance.")
+    print("    - Range: 0 (indicating absence of color temperature) to 6500 ")
+    print("      (cool, bluish-white daylight).")
+    print("    - Typically, warmer temperatures (2500K to 4000K) are used for relaxed settings.")
+    print("    - Cooler temperatures (5000K to 6500K) resemble daylight and are used for")
+    print("      concentration and focus.")
+
+    
+    print("\n************************************************************************************")
+
 
 def main():
     # Provide a fancy header
     print("************************************************************************************")
-    print("                    🌟 Smart Street Lighting Fuzzy System 🌟                        ")
+    print("                        🌟 Smart Street Lighting Fuzzy System 🌟                      ")
     print("************************************************************************************")
 
     # Introduce the system
@@ -387,12 +408,12 @@ def main():
     print("   pedestrian activity, visibility, and the time of day.")
     print("🔹 Just enter the data as prompted, and the system will do the rest!\n")
     variable_instructions()
-
+    output_instructions()
 
     # Offer instructions
     print("\n📝 Follow the prompts to input your data.\n")
 
-    print("************************************************************************************")
+    print("************************************************************************************\n")
 
 
     # Collect data from the user with error handling
