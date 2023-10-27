@@ -417,12 +417,12 @@ def main():
 
 
     # Collect data from the user with error handling
-    ambient_light_input = get_float_input("💡 Enter the Ambient Light Level (0-200): ", 0, 200)
-    distance_input = get_float_input("📏 Enter the Distance from the Street Lamp (0-110): ", 0, 110)
-    traffic_activity_input = get_float_input("🚗 Enter the Traffic Activity per Hour (0-900): ", 0, 900)
-    pedestrian_activity_input = get_float_input("🚶 Enter the Pedestrian Activity per Hour (0-500): ", 0, 500)
-    visibility_input = get_float_input("👀 Enter the Visibility Level (0-2500): ", 0, 2500)
-    time_of_day_input = get_float_input("🕒 Enter the Time of Day (0-24): ", 0, 24)
+    ambient_light_input = get_float_input("💡 Enter the Ambient Light Level (0-200, eg: 90): ", 0, 200)
+    distance_input = get_float_input("📏 Enter the Distance from the Street Lamp (0-110, eg: 15): ", 0, 110)
+    traffic_activity_input = get_float_input("🚗 Enter the Traffic Activity per Hour (0-900, eg: 200): ", 0, 900)
+    pedestrian_activity_input = get_float_input("🚶 Enter the Pedestrian Activity per Hour (0-500, eg: 150): ", 0, 500)
+    visibility_input = get_float_input("👀 Enter the Visibility Level (0-2500, eg:750): ", 0, 2500)
+    time_of_day_input = get_float_input("🕒 Enter the Time of Day (0-24, eg:21): ", 0, 24)
     
     print("\n🔍 Computing the ideal light settings...\n")
     print("************************************************************************************")
